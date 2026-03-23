@@ -5,246 +5,244 @@
 
 <style>
 body {
-  font-family: Arial;
+  font-family: 'Segoe UI';
   margin: 0;
-  background: url("https://images.unsplash.com/photo-1501785888041-af3ef285b470") no-repeat center center/cover;
-  color: #3e2f1c;
+  background: linear-gradient(to bottom, #f8f1e7, #e6d5c3);
   text-align: center;
-}
-
-/* soft overlay */
-body::before {
-  content: "";
-  position: fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background: rgba(255, 248, 230, 0.85);
-  z-index:-1;
+  color: #4b3b2a;
 }
 
 h1 {
-  font-size: 42px;
   margin-top: 20px;
-  color: #5c4033;
+  font-size: 40px;
+}
+
+.top-icons {
+  font-size: 30px;
+  margin-top: 10px;
+}
+
+.buttons {
+  margin: 20px;
 }
 
 button {
-  padding: 10px 15px;
+  padding: 10px 18px;
   margin: 5px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: none;
-  background: #a98467;
+  background: #c8a27c;
   color: white;
   cursor: pointer;
-  transition: 0.2s;
 }
+
 button:hover {
-  background: #7f5539;
+  background: #a67c52;
+}
+
+.card {
+  background: white;
+  margin: 15px auto;
+  padding: 15px;
+  width: 85%;
+  border-radius: 15px;
 }
 
 textarea, input {
   width: 80%;
-  margin: 5px;
   padding: 10px;
+  margin: 5px;
   border-radius: 8px;
-  border: 1px solid #d4a373;
-  background: #fffaf0;
+  border: 1px solid #ddd;
 }
 
-.section { display: none; }
-.active { display: block; }
-
-.card {
-  background: rgba(255,255,255,0.8);
-  margin: 15px auto;
-  padding: 15px;
-  width: 85%;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-
-.list {
-  max-height: 150px;
-  overflow-y: scroll;
-  margin-top: 10px;
+.dropdown {
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: left;
 }
 
 .highlight {
-  background: #ffe8d6;
+  background: #ffe0b2;
 }
+
+.section { display:none; }
+.active { display:block; }
 </style>
 
 </head>
 <body>
 
-<h1>🌊 BRNZEL ACC SORTER 🏔️</h1>
+<h1>🏔️ BRNZEL ACC SORTER 🌊</h1>
+<div class="top-icons">🌿 🧺 📂</div>
 
-<button onclick="show('tool1')">Info Adder</button>
-<button onclick="show('tool2')">Manage Accounts</button>
-<button onclick="show('tool3')">Extractor</button>
+<div class="buttons">
+<button onclick="show('t1')">Info Adder</button>
+<button onclick="show('t2')">Manage</button>
+<button onclick="show('t3')">Extractor</button>
+</div>
 
 <!-- TOOL 1 -->
-<div id="tool1" class="section card">
-<h2>Info Adder</h2>
+<div id="t1" class="section card">
+<h3>Info Adder</h3>
 
-<input id="potions" placeholder="Potions">
-<input id="bucks" placeholder="Bucks">
-<input id="currency" placeholder="Currency">
+<input id="pot" placeholder="Potions">
+<input id="buck" placeholder="Bucks">
+<input id="cur" placeholder="Currency">
 
-<textarea id="up_input" placeholder="Paste or upload data"></textarea>
-<input type="file" onchange="readFile(event,'up_input')">
+<textarea id="input1"></textarea>
+<input type="file" onchange="readFile(event,'input1')">
 
 <button onclick="addInfo()">Process</button>
-<button onclick="download('tool1')">Download</button>
+<button onclick="download('tool1','info.txt')">Download</button>
+<button onclick="copyData('tool1')">Copy</button>
 
-<input id="search1" placeholder="Search username" oninput="searchList('list1','search1')">
-<div id="list1" class="list"></div>
+<input id="s1" placeholder="Search" oninput="search('l1','s1')">
+<div id="l1" class="dropdown"></div>
 </div>
 
 <!-- TOOL 2 -->
-<div id="tool2" class="section card">
-<h2>Manage Accounts</h2>
+<div id="t2" class="section card">
+<h3>Manage Accounts</h3>
 
-<textarea id="acc_input"></textarea>
-<input type="file" onchange="readFile(event,'acc_input')">
+<textarea id="input2"></textarea>
+<input type="file" onchange="readFile(event,'input2')">
 
 <button onclick="saveAcc('valid')">Valid</button>
 <button onclick="saveAcc('invalid')">Invalid</button>
-<button onclick="download('tool2')">Download</button>
+<button onclick="download('tool2','am.txt')">Download</button>
+<button onclick="copyData('tool2')">Copy</button>
 
-<input id="search2" placeholder="Search username" oninput="searchList('list2','search2')">
-<div id="list2" class="list"></div>
+<input id="s2" oninput="search('l2','s2')">
+<div id="l2" class="dropdown"></div>
 </div>
 
 <!-- TOOL 3 -->
-<div id="tool3" class="section card">
-<h2>Extractor</h2>
+<div id="t3" class="section card">
+<h3>Extractor</h3>
 
-<textarea id="raw_input"></textarea>
-<input type="file" onchange="readFile(event,'raw_input')">
+<textarea id="input3"></textarea>
+<input type="file" onchange="readFile(event,'input3')">
 
 <button onclick="extract()">Extract</button>
-<button onclick="download('tool3')">Download</button>
+<button onclick="download('tool3','userpass.txt')">Download</button>
+<button onclick="copyData('tool3')">Copy</button>
 
-<input id="search3" placeholder="Search username" oninput="searchList('list3','search3')">
-<div id="list3" class="list"></div>
+<input id="s3" oninput="search('l3','s3')">
+<div id="l3" class="dropdown"></div>
 </div>
 
 <script>
-// SWITCH
 function show(id){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// FILE
-function readFile(event, target){
-  let reader = new FileReader();
-  reader.onload = e => document.getElementById(target).value = e.target.result;
-  reader.readAsText(event.target.files[0]);
+function readFile(e,id){
+  let r=new FileReader();
+  r.onload=x=>document.getElementById(id).value=x.target.result;
+  r.readAsText(e.target.files[0]);
 }
 
-// EXTRACT
 function getUP(line){
-  let match = line.match(/([^\s:\/]+)[\:\/]([^\s:]+)/);
-  return match ? [match[1], match[2]] : null;
+  let m=line.match(/([^\s:\/]+)[\:\/]([^\s:]+)/);
+  return m?m:null;
 }
 
-// TOOL 1
+// TOOL1
 function addInfo(){
-  let pot = document.getElementById("potions").value;
-  let bucks = document.getElementById("bucks").value;
-  let cur = document.getElementById("currency").value;
-
-  let lines = document.getElementById("up_input").value.split("\n");
-  let out = [];
+  let p=pot.value,b=buck.value,c=cur.value;
+  let lines=input1.value.split("\n");
+  let out=[];
 
   lines.forEach(l=>{
-    let m = getUP(l);
+    let m=getUP(l);
     if(m){
-      out.push(`${m[0]} ${m[1]} ${pot} ${bucks} ${cur}`);
+      out.push(`user: ${m[1]} | pass: ${m[2]} | potions: ${p} | bucks: ${b} | currency: ${c}`);
     }
   });
 
-  localStorage.setItem("tool1", JSON.stringify(out));
-  render("list1", out);
+  localStorage.setItem("tool1",JSON.stringify(out));
+  render("l1",out);
 }
 
-// TOOL 2
+// TOOL2
 function saveAcc(type){
-  let lines = document.getElementById("acc_input").value.split("\n");
-  let data = JSON.parse(localStorage.getItem("tool2"))||[];
+  let lines=input2.value.split("\n");
+  let data=JSON.parse(localStorage.getItem("tool2"))||[];
 
   lines.forEach(l=>{
-    let m = getUP(l);
+    let m=getUP(l);
     if(m){
-      data.push(`${m[0]}:${m[1]} (${type})`);
+      data.push(`user: ${m[1]} | pass: ${m[2]} | status: ${type}`);
     }
   });
 
-  localStorage.setItem("tool2", JSON.stringify(data));
-  render("list2", data);
+  localStorage.setItem("tool2",JSON.stringify(data));
+  render("l2",data);
 }
 
-// TOOL 3
+// TOOL3
 function extract(){
-  let lines = document.getElementById("raw_input").value.split("\n");
-  let out = [];
+  let lines=input3.value.split("\n");
+  let out=[];
 
   lines.forEach(l=>{
-    let m = getUP(l);
+    let m=getUP(l);
     if(m){
-      out.push(`${m[0]}:${m[1]}`);
+      out.push(`user: ${m[1]} | pass: ${m[2]}`);
     }
   });
 
-  out = [...new Set(out)];
-  localStorage.setItem("tool3", JSON.stringify(out));
-  render("list3", out);
+  out=[...new Set(out)];
+  localStorage.setItem("tool3",JSON.stringify(out));
+  render("l3",out);
 }
 
-// RENDER
 function render(id,data){
-  let div = document.getElementById(id);
-  div.innerHTML="";
+  let d=document.getElementById(id);
+  d.innerHTML="";
   data.forEach(x=>{
-    let d=document.createElement("div");
-    d.textContent=x;
-    div.appendChild(d);
+    let div=document.createElement("div");
+    div.textContent=x;
+    d.appendChild(div);
   });
 }
 
-// SEARCH
-function searchList(list,search){
-  let val=document.getElementById(search).value.toLowerCase();
+function search(list,s){
+  let val=document.getElementById(s).value.toLowerCase();
   let items=document.getElementById(list).children;
 
   for(let i=0;i<items.length;i++){
-    let t=items[i].textContent.toLowerCase();
     items[i].classList.remove("highlight");
-
-    if(val && t.includes(val)){
+    if(val && items[i].textContent.toLowerCase().includes(val)){
       items[i].classList.add("highlight");
       items[i].scrollIntoView({behavior:"smooth",block:"center"});
     }
   }
 }
 
-// DOWNLOAD
-function download(key){
-  let data = JSON.parse(localStorage.getItem(key)) || [];
-  let blob = new Blob([data.join("\n")], {type:"text/plain"});
-  let a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = key + ".txt";
+function download(key,name){
+  let d=JSON.parse(localStorage.getItem(key))||[];
+  let blob=new Blob([d.join("\n")]);
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=name;
   a.click();
 }
 
-// LOAD
+function copyData(key){
+  let d=JSON.parse(localStorage.getItem(key))||[];
+  navigator.clipboard.writeText(d.join("\n"));
+}
+
 window.onload=()=>{
-  render("list1",JSON.parse(localStorage.getItem("tool1"))||[]);
-  render("list2",JSON.parse(localStorage.getItem("tool2"))||[]);
-  render("list3",JSON.parse(localStorage.getItem("tool3"))||[]);
+  render("l1",JSON.parse(localStorage.getItem("tool1"))||[]);
+  render("l2",JSON.parse(localStorage.getItem("tool2"))||[]);
+  render("l3",JSON.parse(localStorage.getItem("tool3"))||[]);
 }
 </script>
 
