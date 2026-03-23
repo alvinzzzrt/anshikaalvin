@@ -5,81 +5,104 @@
 
 <style>
 body {
-  font-family: 'Courier New', monospace;
-  background: black;
-  color: #00ffcc;
+  font-family: Arial;
+  margin: 0;
+  background: url("https://images.unsplash.com/photo-1501785888041-af3ef285b470") no-repeat center center/cover;
+  color: #3e2f1c;
   text-align: center;
+}
+
+/* soft overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(255, 248, 230, 0.85);
+  z-index:-1;
 }
 
 h1 {
   font-size: 42px;
-  text-shadow: 0 0 10px #00ffcc;
+  margin-top: 20px;
+  color: #5c4033;
 }
 
 button {
   padding: 10px 15px;
   margin: 5px;
-  border-radius: 8px;
+  border-radius: 10px;
   border: none;
-  background: #00ffcc;
-  color: black;
+  background: #a98467;
+  color: white;
   cursor: pointer;
+  transition: 0.2s;
+}
+button:hover {
+  background: #7f5539;
 }
 
 textarea, input {
   width: 80%;
   margin: 5px;
   padding: 10px;
-  background: #111;
-  color: #00ffcc;
-  border: 1px solid #00ffcc;
+  border-radius: 8px;
+  border: 1px solid #d4a373;
+  background: #fffaf0;
 }
 
 .section { display: none; }
 .active { display: block; }
 
+.card {
+  background: rgba(255,255,255,0.8);
+  margin: 15px auto;
+  padding: 15px;
+  width: 85%;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
 .list {
   max-height: 150px;
   overflow-y: scroll;
-  border: 1px solid #00ffcc;
-  margin: 10px;
+  margin-top: 10px;
 }
 
 .highlight {
-  background: yellow;
-  color: black;
+  background: #ffe8d6;
 }
 </style>
 
 </head>
 <body>
 
-<h1>BRNZEL ACC SORTER 💀</h1>
+<h1>🌊 BRNZEL ACC SORTER 🏔️</h1>
 
 <button onclick="show('tool1')">Info Adder</button>
 <button onclick="show('tool2')">Manage Accounts</button>
 <button onclick="show('tool3')">Extractor</button>
 
 <!-- TOOL 1 -->
-<div id="tool1" class="section">
+<div id="tool1" class="section card">
 <h2>Info Adder</h2>
 
 <input id="potions" placeholder="Potions">
 <input id="bucks" placeholder="Bucks">
 <input id="currency" placeholder="Currency">
 
-<textarea id="up_input"></textarea>
+<textarea id="up_input" placeholder="Paste or upload data"></textarea>
 <input type="file" onchange="readFile(event,'up_input')">
 
 <button onclick="addInfo()">Process</button>
 <button onclick="download('tool1')">Download</button>
 
-<input id="search1" placeholder="Search" oninput="searchList('list1','search1')">
+<input id="search1" placeholder="Search username" oninput="searchList('list1','search1')">
 <div id="list1" class="list"></div>
 </div>
 
 <!-- TOOL 2 -->
-<div id="tool2" class="section">
+<div id="tool2" class="section card">
 <h2>Manage Accounts</h2>
 
 <textarea id="acc_input"></textarea>
@@ -89,12 +112,12 @@ textarea, input {
 <button onclick="saveAcc('invalid')">Invalid</button>
 <button onclick="download('tool2')">Download</button>
 
-<input id="search2" oninput="searchList('list2','search2')">
+<input id="search2" placeholder="Search username" oninput="searchList('list2','search2')">
 <div id="list2" class="list"></div>
 </div>
 
 <!-- TOOL 3 -->
-<div id="tool3" class="section">
+<div id="tool3" class="section card">
 <h2>Extractor</h2>
 
 <textarea id="raw_input"></textarea>
@@ -103,7 +126,7 @@ textarea, input {
 <button onclick="extract()">Extract</button>
 <button onclick="download('tool3')">Download</button>
 
-<input id="search3" oninput="searchList('list3','search3')">
+<input id="search3" placeholder="Search username" oninput="searchList('list3','search3')">
 <div id="list3" class="list"></div>
 </div>
 
@@ -114,28 +137,26 @@ function show(id){
   document.getElementById(id).classList.add('active');
 }
 
-// READ FILE
+// FILE
 function readFile(event, target){
   let reader = new FileReader();
-  reader.onload = function(e){
-    document.getElementById(target).value = e.target.result;
-  }
+  reader.onload = e => document.getElementById(target).value = e.target.result;
   reader.readAsText(event.target.files[0]);
 }
 
-// EXTRACT USER PASS
+// EXTRACT
 function getUP(line){
-  let match = line.match(/([^:\s\/]+)[\:\/]([^:\s]+)/);
+  let match = line.match(/([^\s:\/]+)[\:\/]([^\s:]+)/);
   return match ? [match[1], match[2]] : null;
 }
 
 // TOOL 1
 function addInfo(){
-  let pot = potions.value;
-  let bucks = bucks.value;
-  let cur = currency.value;
+  let pot = document.getElementById("potions").value;
+  let bucks = document.getElementById("bucks").value;
+  let cur = document.getElementById("currency").value;
 
-  let lines = up_input.value.split("\n");
+  let lines = document.getElementById("up_input").value.split("\n");
   let out = [];
 
   lines.forEach(l=>{
@@ -151,7 +172,7 @@ function addInfo(){
 
 // TOOL 2
 function saveAcc(type){
-  let lines = acc_input.value.split("\n");
+  let lines = document.getElementById("acc_input").value.split("\n");
   let data = JSON.parse(localStorage.getItem("tool2"))||[];
 
   lines.forEach(l=>{
@@ -167,7 +188,7 @@ function saveAcc(type){
 
 // TOOL 3
 function extract(){
-  let lines = raw_input.value.split("\n");
+  let lines = document.getElementById("raw_input").value.split("\n");
   let out = [];
 
   lines.forEach(l=>{
