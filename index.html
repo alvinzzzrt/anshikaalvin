@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BRNZEL ACC SORTER</title>
+
+<style>
+body {
+  font-family: 'Courier New', monospace;
+  background: black;
+  color: #00ffcc;
+  text-align: center;
+}
+
+h1 {
+  font-size: 42px;
+  text-shadow: 0 0 10px #00ffcc;
+}
+
+button {
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 8px;
+  border: none;
+  background: #00ffcc;
+  color: black;
+  cursor: pointer;
+}
+
+textarea, input {
+  width: 80%;
+  margin: 5px;
+  padding: 10px;
+  background: #111;
+  color: #00ffcc;
+  border: 1px solid #00ffcc;
+}
+
+.section { display: none; }
+.active { display: block; }
+
+.list {
+  max-height: 150px;
+  overflow-y: scroll;
+  border: 1px solid #00ffcc;
+  margin: 10px;
+}
+
+.highlight {
+  background: yellow;
+  color: black;
+}
+</style>
+
+</head>
+<body>
+
+<h1>BRNZEL ACC SORTER 💀</h1>
+
+<button onclick="show('tool1')">Info Adder</button>
+<button onclick="show('tool2')">Manage Accounts</button>
+<button onclick="show('tool3')">Extractor</button>
+
+<!-- TOOL 1 -->
+<div id="tool1" class="section">
+<h2>Info Adder</h2>
+
+<input id="potions" placeholder="Potions">
+<input id="bucks" placeholder="Bucks">
+<input id="currency" placeholder="Currency">
+
+<textarea id="up_input"></textarea>
+<input type="file" onchange="readFile(event,'up_input')">
+
+<button onclick="addInfo()">Process</button>
+<button onclick="download('tool1')">Download</button>
+
+<input id="search1" placeholder="Search" oninput="searchList('list1','search1')">
+<div id="list1" class="list"></div>
+</div>
+
+<!-- TOOL 2 -->
+<div id="tool2" class="section">
+<h2>Manage Accounts</h2>
+
+<textarea id="acc_input"></textarea>
+<input type="file" onchange="readFile(event,'acc_input')">
+
+<button onclick="saveAcc('valid')">Valid</button>
+<button onclick="saveAcc('invalid')">Invalid</button>
+<button onclick="download('tool2')">Download</button>
+
+<input id="search2" oninput="searchList('list2','search2')">
+<div id="list2" class="list"></div>
+</div>
+
+<!-- TOOL 3 -->
+<div id="tool3" class="section">
+<h2>Extractor</h2>
+
+<textarea id="raw_input"></textarea>
+<input type="file" onchange="readFile(event,'raw_input')">
+
+<button onclick="extract()">Extract</button>
+<button onclick="download('tool3')">Download</button>
+
+<input id="search3" oninput="searchList('list3','search3')">
+<div id="list3" class="list"></div>
+</div>
+
+<script>
+// SWITCH
+function show(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// READ FILE
+function readFile(event, target){
+  let reader = new FileReader();
+  reader.onload = function(e){
+    document.getElementById(target).value = e.target.result;
+  }
+  reader.readAsText(event.target.files[0]);
+}
+
+// EXTRACT USER PASS
+function getUP(line){
+  let match = line.match(/([^:\s\/]+)[\:\/]([^:\s]+)/);
+  return match ? [match[1], match[2]] : null;
+}
+
+// TOOL 1
+function addInfo(){
+  let pot = potions.value;
+  let bucks = bucks.value;
+  let cur = currency.value;
+
+  let lines = up_input.value.split("\n");
+  let out = [];
+
+  lines.forEach(l=>{
+    let m = getUP(l);
+    if(m){
+      out.push(`${m[0]} ${m[1]} ${pot} ${bucks} ${cur}`);
+    }
+  });
+
+  localStorage.setItem("tool1", JSON.stringify(out));
+  render("list1", out);
+}
+
+// TOOL 2
+function saveAcc(type){
+  let lines = acc_input.value.split("\n");
+  let data = JSON.parse(localStorage.getItem("tool2"))||[];
+
+  lines.forEach(l=>{
+    let m = getUP(l);
+    if(m){
+      data.push(`${m[0]}:${m[1]} (${type})`);
+    }
+  });
+
+  localStorage.setItem("tool2", JSON.stringify(data));
+  render("list2", data);
+}
+
+// TOOL 3
+function extract(){
+  let lines = raw_input.value.split("\n");
+  let out = [];
+
+  lines.forEach(l=>{
+    let m = getUP(l);
+    if(m){
+      out.push(`${m[0]}:${m[1]}`);
+    }
+  });
+
+  out = [...new Set(out)];
+  localStorage.setItem("tool3", JSON.stringify(out));
+  render("list3", out);
+}
+
+// RENDER
+function render(id,data){
+  let div = document.getElementById(id);
+  div.innerHTML="";
+  data.forEach(x=>{
+    let d=document.createElement("div");
+    d.textContent=x;
+    div.appendChild(d);
+  });
+}
+
+// SEARCH
+function searchList(list,search){
+  let val=document.getElementById(search).value.toLowerCase();
+  let items=document.getElementById(list).children;
+
+  for(let i=0;i<items.length;i++){
+    let t=items[i].textContent.toLowerCase();
+    items[i].classList.remove("highlight");
+
+    if(val && t.includes(val)){
+      items[i].classList.add("highlight");
+      items[i].scrollIntoView({behavior:"smooth",block:"center"});
+    }
+  }
+}
+
+// DOWNLOAD
+function download(key){
+  let data = JSON.parse(localStorage.getItem(key)) || [];
+  let blob = new Blob([data.join("\n")], {type:"text/plain"});
+  let a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = key + ".txt";
+  a.click();
+}
+
+// LOAD
+window.onload=()=>{
+  render("list1",JSON.parse(localStorage.getItem("tool1"))||[]);
+  render("list2",JSON.parse(localStorage.getItem("tool2"))||[]);
+  render("list3",JSON.parse(localStorage.getItem("tool3"))||[]);
+}
+</script>
+
+</body>
+</html>
